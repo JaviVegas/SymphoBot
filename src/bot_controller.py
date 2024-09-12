@@ -66,6 +66,9 @@ def run_bot():
 
     @client.event
     async def on_ready() -> None:
+        '''
+        Runs only once when bot awakes.
+        '''
         print(f"{client.user} is now running!")
         
         game = Game("some tunes!")
@@ -74,6 +77,9 @@ def run_bot():
 
     @client.event
     async def on_message(message: Message) -> None:
+        '''
+        Runs when a message is sent on any of the server channels.
+        '''
         if is_bot_message(message.author, client.user):
             return
 
