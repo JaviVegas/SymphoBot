@@ -1,82 +1,163 @@
 import yt_dlp
 import re
-
-#podriamos hacer un json y dps borrar el json
-#el usuario podria acceder al historial de reproduccion antes de salir de la sesion y borrarlo
-dicci={}
-
+from src.paths import *
+from src.json_controller import *
 
 def extract_info_from_description(description):
-  
+    ##REVISAR SI DEJAMOS ESTA FUNCION O NO 
     match = re.search(r'(?P<artist>.+?)\s*-\s*(?P<title>.+)', description)
     if match:
         return match.group('title').strip(), match.group('artist').strip()
     return 'Desconocido', 'Desconocido'
 
-def get_song_info(url):
+       
+    
+#solo descargo el audio
+def download_song(url,key, TEMP_PATH):
+    '''
+    downloads the requested song
+
+    Parameters
+    ----------
+    url : String
+        The video/playlist url
+    key: String
+        The song identifier
+    TEMP_PATH: String
+        Absolute path to the 'temp' directory
+    Returns
+    -------
+    string
+        
+    '''    
+    #ffmpeg\fmpeg.exe
+    absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe")
+    name='%(title)s.%(ext)s'; 
+    path_name=convert_to_absolute(TEMP_PATH+"/"+name)
+    
     ydl_opts = {
         'format': 'bestaudio/best',  
-        'noplaylist': True,  
-    }
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        title = info.get('title', 'Desconocido')
-        uploader = info.get('uploader', 'Desconocido')
-        description = info.get('description', '')
-
-        # intenro buscar el artista y el titulo por la descripcion del video
-        extracted_title, extracted_artist = extract_info_from_description(description)
-        if extracted_title != 'Deconocido' or extracted_artist != 'Desconocido':
-            return extracted_title+extracted_artist
-
-       
-        #tendiramos q chequear que no este repetido 
-        # pq podria quedar una clave 'Desconocido-Desonocido' varias veces
-        #en caso de que no se encuentre un artista y un titulo muchas veces
-        
-        return title+uploader
-#solo descargo el audio
-def descargar_cancion(url, TEMP_PATH):
-    name='%(title)s.%(ext)s'; 
-    path= TEMP_PATH+name;
-    ydl_opts = {
-        'format': 'bestaudio/best',  #descargo el mejor formato d audio
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',#ouede ser otro formato 
-            'preferredquality': '192',# calidad de audio en kbps¿? no tenfgo ni idea de audio asi q dejo este numero 
+            'preferredcodec': 'mp3', 
+            'preferredquality': '192',
         }],
-    
-        #JAVI MODIFICA LA RUTA CON LA RUTA DEL FMPEG.EXE
-    #(donde hayas descomprimido el fmpeg.zip) PQ SINO NO FUNCA
-        #*
-        'ffmpeg_location': r'C:\Users\bianc\Desktop\2do Sem 2024\ffmpeg-7.0.2-full_build\bin\fmpeg.exe',  #ruta ABSOLUTA a ffmpeg.exe, deberia ser relativa pero dsp lo arreglo
-        'outtmpl': path,  #formatear el nombre pa que quede bonito 
+
+        'ffmpeg_location': rf'{absolute_exe_path}',  
+        'outtmpl': path_name,   
     }
    
-   
-
-# Ruta y nombre del archivo de salida
+    dicci={}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
-        title = info.get('title', 'Desconocido')#obtiene el nombre de la cancion y si no lo encuentra devulve desconocido
-                                                #GUARDA CON LOS REPETIDOS 
-        uploader = info.get('uploader', 'Desconocido')#obtine el artista de la cancion y si no lo encuentra devuelve desconocido
-    
-        dicci['tittle+info']= path
+        title = info.get('title', 'Desconocido')
+        uploader = info.get('uploader', 'Desconocido')
+        
+      
+        dicci[key]={'Title':title,
+                    'Artist': uploader,
+                    'Relative-Path':convert_to_relative(path_name)}
+    return dicci
+#[{url:{titulo: blala, 
+#     artista: blabla
+#     ruta: blabla}, 
+#{}
+#]
+
+def cut_url(url,inichar,endchar): 
+    '''
+    obtains the url identifier
+
+    Parameters
+    ----------
+    url : String
+        The video/playlist url
+    inichar: char
+        initial identifier delimiter
+    endchar: char 
+        end delimiter of the identifier
+    Returns
+    -------
+    string
+        
+    '''    
+    initialpos = url.find(inichar)
+    print(initialpos)
+    endpos=url.find(endchar)
+    print(initialpos)
+    if endpos != -1: 
+        key= url[(initialpos+1): (endpos -1)]
+    else: 
+        key= url[(initialpos+1): (len(url))]  
+    return key
+            
+            
+            
+def process_url(url):
+    '''
+    process url
+
+    Parameters
+    ----------
+    url : String
+        The video/playlist url
+        
+    Returns
+    -------
+    string/None
+        
+    '''
+    if url.starswith("https://www.youtube.com/watch?v=") or url.startswith("https://m.youtube.com/watch?v=") : 
+        key=cut_url(url, '=', '&')
+        return key
+    elif url.starswith("https://youtu.be/"):
+        key=cut_url(url, '/', '?')
+        return key
+    else: 
+        return None
 
 
 
 
-TEMP_PATH= 'blablabla'#ponele q es una ruta valida
-# descargo el audio
-video_url = "https://www.youtube.com/watch?v=efS8lO4nCtQ&ab_channel=juanjannon4001"
+def get_song(url):
+    '''
+    tries to open the json file and checks for the existence of the song. 
+    If it does not exist, it downloads it and saves its data. 
 
+    Parameters
+    ----------
+    url : String
+        The video/playlist url
+        
+    Returns
+    -------
+    string
+        
+    '''
+    TEMP_PATH= convert_to_absolute('temp')
+    key= process_url
+    json_path=convert_to_absolute('data/history.json')
+    try: 
+        read_json(json_path)
+        if (key is not None) and (key not in dicci): 
+  
+            dicci=download_song(url, key,TEMP_PATH)
+            write_json(json_path, dicci)
+        elif key is not None:
+            #busco la cancion en dicci y la reproduczo PARA IMPLEMENTAR
+            pass
+    except FileNotFoundError: 
+        if key is not None: 
+            dicci=download_song(url, key,TEMP_PATH)
+            write_json(json_path, dicci)
+    return key
+         
+        
+        
+        
 
-if get_song_info(video_url) not in dicci: 
-    #si no esta la cancion registrada en el dicci la descargo 
-    descargar_cancion(video_url)
+video_web_url = "https://www.youtube.com/watch?v=efS8lO4nCtQ&ab_channel=juanjannon4001"
+video_app_url="https://youtu.be/efS8lO4nCtQ?si=kBotFy7AOteH1A49"
 
-
+get_song(video_web_url)
 print ("todo ok")
