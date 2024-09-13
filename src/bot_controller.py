@@ -2,7 +2,12 @@ import os
 import asyncio
 import yt_dlp
 from dotenv import load_dotenv
-from discord import Intents, Client, Message, Status, Game, Object, User, ClientUser
+from discord import Intents, Client, Message, Status, Game
+import src.message_manager as message_manager
+from src.json_controller import read_json
+from src.path_converter import *
+import src.bot_actions as bot_actions
+
 
 def is_bot_message(message_author, this_bot):
     '''
@@ -48,7 +53,7 @@ def get_client():
     '''
     bot_intents = Intents.default()
     bot_intents.message_content = True
-    return Client(bot_intents)
+    return Client(intents= bot_intents)
 
 
 def run_bot():
@@ -64,6 +69,7 @@ def run_bot():
 
     ffmpeg = {"options": "-vn"}
 
+
     @client.event
     async def on_ready() -> None:
         '''
@@ -75,6 +81,7 @@ def run_bot():
         await Client.change_presence(status= Status.online,
                                      activity= game)
 
+
     @client.event
     async def on_message(message: Message) -> None:
         '''
@@ -83,12 +90,49 @@ def run_bot():
         if is_bot_message(message.author, client.user):
             return
 
-        print(f"I can read you {message.author} :)")
+        print(f"I can read you {message.author} :)\n")
 
-        channel: str = str(message.channel)
-        username: str = str(message.author)
-        user_message: str = message.content        
+        message_data = {"Channel": str(message.channel),
+                        "Username": str(message.author),
+                        "Message-Body": message.content}
 
-        print(f"[{channel}] {username}: '{user_message}'")
+        print(f"[{message_data["Channel"]}] {message_data["Username"]}: '{message_data['Message-Body']}'")
         
         # CALL RESPONSE MANAGER HERE.
+        command = message_manager.get_command(message_data["Message-Body"])
+
+        command_list = read_json(convert_to_absolute("data/responses.json"))
+        if command[0].lower() in command_list:
+            
+            # Bot Main Actions.
+
+            if command[0] == "join":
+                try:
+                    vc = bot_actions.join(message_data["Username"])
+                    voice_clients[vc.guild.id] = vc
+
+                except Exception as e:
+                    print(e)
+
+            
+            elif command[0] == "play":
+                try:
+                    player = bot_actions.play(command[1])
+                    voice_clients[message.guild.id].play(player)
+
+                except Exception as e:
+                    print(e)
+
+
+            elif command[0] == "pause":
+                bot_actions.pause()
+
+
+            elif command[0] == "stop":
+                bot_actions.stop()
+
+
+            await message_data["Channel"].send(command_list[command[0].lower()])
+
+        elif command == "help":
+            await message_data["Channel"].send(message_manager.get_help_message())

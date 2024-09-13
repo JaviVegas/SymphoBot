@@ -5,7 +5,6 @@ ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print (ROOT_PATH )
 
 
-
 def convert_to_relative(absolute_path):
     '''
     converts an absolute path to a relative path
@@ -25,6 +24,7 @@ def convert_to_relative(absolute_path):
     generic_path= relative_path.replace(os.path.sep, "/")
 
     return generic_path
+
 
 def convert_to_absolute(relative_path):
     '''

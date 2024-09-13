@@ -1,6 +1,6 @@
 import yt_dlp
 import re
-from src.paths import *
+from path_converter import *
 from src.json_controller import *
 
 def extract_info_from_description(description):
@@ -13,7 +13,7 @@ def extract_info_from_description(description):
        
     
 #solo descargo el audio
-def download_video(url, key, dicci, temp_path):
+async def download_video(url, key, dicci, temp_path):
     '''
     Downloads the requested video as an audio file.
 
@@ -51,6 +51,7 @@ def download_video(url, key, dicci, temp_path):
     }
    
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        # info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=True))
         info = ydl.extract_info(url, download=True)
         title = info.get('title', 'Desconocido')
         uploader = info.get('uploader', 'Desconocido')
