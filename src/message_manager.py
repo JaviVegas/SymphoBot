@@ -36,16 +36,20 @@ def get_command(message_body: str) -> list:
     list
         A list representing a potential command sent by a user.
     '''
-    if message_body[0] == "?":
+    list = []
+    if message_body.startswith("?"):
         potential_command = message_body[1:]
+        print(potential_command)
         
         #Space is intentional here!
         if potential_command.startswith("play "):
-            potential_command = potential_command.split(" ")
+            list = potential_command.split(" ")
         
         else:
-            potential_command = list(potential_command)
+            list.append(potential_command)
+        
+    return list
 
-        return potential_command
+        
 
 

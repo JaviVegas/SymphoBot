@@ -53,6 +53,8 @@ def get_client():
     '''
     bot_intents = Intents.default()
     bot_intents.messages= True
+    bot_intents.message_content = True
+    bot_intents.guild_typing = True
     return Client(intents= bot_intents)
 
 
@@ -78,7 +80,7 @@ def run_bot():
         print(f"{client.user} is now running!")
         
         game = Game("some tunes!")
-        await Client.change_presence(status= Status.online,
+        await client.change_presence(status= Status.online,
                                      activity= game)
 
 
@@ -92,65 +94,74 @@ def run_bot():
 
         print(f"I can read you {message.author} :)\n")
 
+        user_message: str = message.content
         message_data = {"Channel": str(message.channel),
                         "Username": str(message.author),
-                        "Message-Body": message.content}
+                        "Message-Body": user_message}
 
         print(f"[{message_data['Channel']}] {message_data['Username']}: '{message_data['Message-Body']}'")
         
         # CALL RESPONSE MANAGER HERE.
         command = message_manager.get_command(message_data["Message-Body"])
-
+        print(message_data)
+        print("--------")
+        print(type(command))
+        print(command)
         command_list = read_json(convert_to_absolute("data/responses.json"))
-        if command[0].lower() in command_list:
+        if (command is not None) and (command[0].lower() in command_list):
 
             # Bot Main Actions.
             
-            if command[0] == "play":
+            if command[0].lower() == "play":
                 try:
                     vc = bot_actions.join(message_data["Username"])
                     voice_clients[vc.guild.id] = vc
 
                 except Exception as e:
-                    print(e+"no se pudo unir al chat de voz")
+                    print(e, " - No se pudo unir al chat de voz")
                 
                 try:
                     player = bot_actions.play(command[1])
+                    
                     if (player is not None):
                         voice_clients[message.guild.id].play(player)
-                        await message_data["Channel"].send(command_list[command[0].lower()])
+                        await message.channel.send(command_list[command[0].lower()])
+                    
                     else: 
-                        await message_data["Channel"].send("video not found")
+                        await message.channel.send("video not found")
+                
                 except Exception as e:
-                    print(e+"no se puede reproducir la cancion")
+                    print(e, " - No se puede reproducir la cancion")
 
 
-            elif command[0] == "pause":
+            elif command[0].lower() == "pause":
                 try:
                     voice_clients[message.guild.id].pause()
-                    await message_data["Channel"].send(command_list[command[0].lower()])
+                    await message.channel.send(command_list[command[0].lower()])
+                
                 except Exception as e:
                     print(e)
 
 
-            elif command[0] == "resume":
+            elif command[0].lower() == "resume":
                 try:
                     voice_clients[message.guild.id].resume()
-                    await message_data["Channel"].send(command_list[command[0].lower()])
+                    await message.channel.send(command_list[command[0].lower()])
+                
                 except Exception as e:
                     print(e)
 
 
-            elif command[0] == "stop":
+            elif command[0].lower() == "stop":
                 try:
                     voice_clients[message.guild.id].stop()
                     await voice_clients[message.guild.id].disconnect()
-                    await message_data["Channel"].send(command_list[command[0].lower()])
+                    await message.channel.send(command_list[command[0].lower()])
+                
                 except Exception as e:
-                    print(e)
+                    print(e)           
 
+        elif (command is not None) and (command[0].lower() == "help"):
+            await message.channel.send(message_manager.get_help_message())
 
-           
-
-        elif command == "help":
-            await message_data["Channel"].send(message_manager.get_help_message())
+    client.run(TOKEN)
