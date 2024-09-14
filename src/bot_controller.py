@@ -52,7 +52,7 @@ def get_client():
         A client connection that connects to Discord.
     '''
     bot_intents = Intents.default()
-    bot_intents.message_content = True
+    bot_intents.messages= True
     return Client(intents= bot_intents)
 
 
@@ -96,7 +96,7 @@ def run_bot():
                         "Username": str(message.author),
                         "Message-Body": message.content}
 
-        print(f"[{message_data["Channel"]}] {message_data["Username"]}: '{message_data['Message-Body']}'")
+        print(f"[{message_data['Channel']}] {message_data['Username']}: '{message_data['Message-Body']}'")
         
         # CALL RESPONSE MANAGER HERE.
         command = message_manager.get_command(message_data["Message-Body"])

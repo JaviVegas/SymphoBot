@@ -22,7 +22,7 @@ Use "?" to comunicate with SymphoBot, followed by one of the next messages:
 Enjoy!
 '''
 
-def get_command(message_body: str) -> list[str]:
+def get_command(message_body: str) -> list:
     '''
     Interprets a command message recived from a user.
 
@@ -33,8 +33,8 @@ def get_command(message_body: str) -> list[str]:
     
     Returns
     -------
-    str
-        A string representing a potential command sent by a user.
+    list
+        A list representing a potential command sent by a user.
     '''
     if message_body[0] == "?":
         potential_command = message_body[1:]

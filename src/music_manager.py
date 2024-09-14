@@ -1,7 +1,7 @@
 import yt_dlp
 import re
 import asyncio
-from path_converter import *
+from src.path_converter import *
 from src.json_controller import *
 
 def extract_info_from_description(description):
