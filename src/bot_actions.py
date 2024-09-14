@@ -7,13 +7,14 @@ async def join(user: User):
     return voice_client    
 
 def play(url: str):
-    loop = asyncio.get_event_loop()
-
-    ffmpeg_options = {"options": "-vn"}
-
+    #loop = asyncio.get_event_loop()
+    
+    #aca necesitamos el info
+    player = None
     song = get_song(url)
-
-    player = FFmpegPCMAudio(song, **ffmpeg_options)
+    ffmpeg_options = {"options": "-vn"}
+    if (song is not None):
+        player = FFmpegPCMAudio(song['url'], **ffmpeg_options)
 
     return player
 

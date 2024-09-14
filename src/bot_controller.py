@@ -112,20 +112,23 @@ def run_bot():
                     voice_clients[vc.guild.id] = vc
 
                 except Exception as e:
-                    print(e)
-
+                    print(e+"no se pudo unir al chat de voz")
+                
                 try:
                     player = bot_actions.play(command[1])
-                    voice_clients[message.guild.id].play(player)
-                    
+                    if (player is not None):
+                        voice_clients[message.guild.id].play(player)
+                        await message_data["Channel"].send(command_list[command[0].lower()])
+                    else: 
+                        await message_data["Channel"].send("video not found")
                 except Exception as e:
-                    print(e)
+                    print(e+"no se puede reproducir la cancion")
 
 
             elif command[0] == "pause":
                 try:
                     voice_clients[message.guild.id].pause()
-
+                    await message_data["Channel"].send(command_list[command[0].lower()])
                 except Exception as e:
                     print(e)
 
@@ -133,7 +136,7 @@ def run_bot():
             elif command[0] == "resume":
                 try:
                     voice_clients[message.guild.id].resume()
-                    
+                    await message_data["Channel"].send(command_list[command[0].lower()])
                 except Exception as e:
                     print(e)
 
@@ -142,12 +145,12 @@ def run_bot():
                 try:
                     voice_clients[message.guild.id].stop()
                     await voice_clients[message.guild.id].disconnect()
-
+                    await message_data["Channel"].send(command_list[command[0].lower()])
                 except Exception as e:
                     print(e)
 
 
-            await message_data["Channel"].send(command_list[command[0].lower()])
+           
 
         elif command == "help":
             await message_data["Channel"].send(message_manager.get_help_message())

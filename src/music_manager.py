@@ -1,5 +1,6 @@
 import yt_dlp
 import re
+import asyncio
 from path_converter import *
 from src.json_controller import *
 
@@ -13,9 +14,9 @@ def extract_info_from_description(description):
        
     
 #solo descargo el audio
-async def download_video(url, key, dicci, temp_path):
+async def get_video(url, key, dicci):
     '''
-    Downloads the requested video as an audio file.
+    Gets the requested video as an audio file.
 
     Parameters
     ----------
@@ -36,7 +37,7 @@ async def download_video(url, key, dicci, temp_path):
     #ffmpeg\fmpeg.exe
     absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe")
     name='%(title)s.%(ext)s'; 
-    path_name=convert_to_absolute(temp_path + "/" + name)
+
     
     ydl_opts = {
         'format': 'bestaudio/best',  
@@ -46,28 +47,31 @@ async def download_video(url, key, dicci, temp_path):
             'preferredquality': '192',
         }],
 
-        'ffmpeg_location': rf'{absolute_exe_path}',  
-        'outtmpl': path_name,   
+        'ffmpeg_location': rf'{absolute_exe_path}'
     }
    
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        # info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=True))
-        info = ydl.extract_info(url, download=True)
-        title = info.get('title', 'Desconocido')
-        uploader = info.get('uploader', 'Desconocido')
-        
-      
-        dicci[key]={'Title': title,
-                    'Artist': uploader,
-                    'Relative-Path': convert_to_relative(path_name)
-                    }
+        loop = asyncio.get_event_loop()
+        info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=False))
+        #info = ydl.extract_info(url, download=False)
+
     
-    return dicci
+    return info
 #[{url:{titulo: blala, 
 #     artista: blabla
 #     ruta: blabla}, 
 #{}
 #]
+
+def write_history(info, dicci, key):
+    title = info.get('title', 'Desconocido')
+    uploader = info.get('uploader', 'Desconocido')
+    dicci[key]={'Title': title,
+                'Artist': uploader, 
+                'Listens': 1
+                }
+    return dicci
+
 
 def cut_url(url, inichar, endchar): 
     '''
@@ -144,26 +148,31 @@ def get_song(url):
     None
         Represents the video was not found.
     '''
-    temp_path= convert_to_absolute('temp')
-    key= process_url
+    #temp_path= convert_to_absolute('temp')
+    key= process_url(url)
     json_path=convert_to_absolute('data/history.json')
+    new_dicci={}
+    info= None
     try: 
         dicci = read_json(json_path)
-        if (key is not None) and (key not in dicci):  
-            new_dicci=download_video(url, key, dicci, temp_path)
+        
+        if (key is not None): 
+            info=get_video(url, key, dicci)
+            if  (key not in dicci):  
+                new_dicci=write_history(info, dicci, key)
+            else: 
+                new_dicci= dicci
+                new_dicci[key]['Listens']+=1
             write_json(json_path, new_dicci)
-
-        elif key is not None:
-            # busco la cancion en dicci y la reproduczo
-            # PARA IMPLEMENTAR
-            pass
-
+        else: 
+            print (" che no tengo url")
     except FileNotFoundError: 
         if key is not None: 
-            dicci=download_video(url, key, temp_path)
-            write_json(json_path, dicci)
+            info=get_video(url, key)
+            new_dicci=write_history(info, dicci, key)
+            write_json(json_path, new_dicci)
     
-    return key
+    return info
          
         
         
