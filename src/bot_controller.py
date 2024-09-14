@@ -108,7 +108,7 @@ def run_bot():
         print(type(command))
         print(command)
         command_list = read_json(convert_to_absolute("data/responses.json"))
-        if (command is not None) and (command[0].lower() in command_list):
+        if (command != []) and (command[0].lower() in command_list):
 
             # Bot Main Actions.
             
@@ -161,7 +161,7 @@ def run_bot():
                 except Exception as e:
                     print(e)           
 
-        elif (command is not None) and (command[0].lower() == "help"):
+        elif (command != []) and (command[0].lower() == "help"):
             await message.channel.send(message_manager.get_help_message())
 
     client.run(TOKEN)
