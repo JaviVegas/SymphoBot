@@ -103,10 +103,10 @@ def run_bot():
 
         command_list = read_json(convert_to_absolute("data/responses.json"))
         if command[0].lower() in command_list:
-            
-            # Bot Main Actions.
 
-            if command[0] == "join":
+            # Bot Main Actions.
+            
+            if command[0] == "play":
                 try:
                     vc = bot_actions.join(message_data["Username"])
                     voice_clients[vc.guild.id] = vc
@@ -114,22 +114,37 @@ def run_bot():
                 except Exception as e:
                     print(e)
 
-            
-            elif command[0] == "play":
                 try:
                     player = bot_actions.play(command[1])
                     voice_clients[message.guild.id].play(player)
-
+                    
                 except Exception as e:
                     print(e)
 
 
             elif command[0] == "pause":
-                bot_actions.pause()
+                try:
+                    voice_clients[message.guild.id].pause()
+
+                except Exception as e:
+                    print(e)
+
+
+            elif command[0] == "resume":
+                try:
+                    voice_clients[message.guild.id].resume()
+                    
+                except Exception as e:
+                    print(e)
 
 
             elif command[0] == "stop":
-                bot_actions.stop()
+                try:
+                    voice_clients[message.guild.id].stop()
+                    await voice_clients[message.guild.id].disconnect()
+
+                except Exception as e:
+                    print(e)
 
 
             await message_data["Channel"].send(command_list[command[0].lower()])

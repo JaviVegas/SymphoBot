@@ -1,9 +1,9 @@
 {
-    "join": "Joining <Voice-Channel>",
+    "play": "Now playing!",
 
-    "play": "Now playing <Audio-Name>!",
+    "pause": "Paused! Enter ?resume to resume.",
 
-    "pause": "Paused! Enter ?play to resume.",
+    "resume": "Resuming!",
 
     "stop": "Stopping..."
 }
