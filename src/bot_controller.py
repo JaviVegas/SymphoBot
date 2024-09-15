@@ -8,6 +8,7 @@ from src.json_controller import read_json
 from src.path_converter import *
 import src.bot_actions as bot_actions
 
+import nacl
 
 def is_bot_message(message_author, this_bot):
     '''
@@ -113,18 +114,23 @@ def run_bot():
             # Bot Main Actions.
             
             if command[0].lower() == "play":
+                
                 try:
-                    vc = bot_actions.join(message_data["Username"])
+                  # vc = bot_actions.join(message_data["Username"])  <- anterior
+                    print (type(message))
+                    print ("______________________________________________________________")
+                   # vc = await bot_actions.join(message_data["Username"])
+                    vc = await bot_actions.join(message)
+                    print ("hasta aca todo ok")
                     voice_clients[vc.guild.id] = vc
-
                 except Exception as e:
                     print(e, " - No se pudo unir al chat de voz")
                 
                 try:
-                    player = bot_actions.play(command[1])
+                    player = await bot_actions.play(command[1]) ##a ver si funca con el await
                     
                     if (player is not None):
-                        voice_clients[message.guild.id].play(player)
+                        await voice_clients[message.guild.id].play(player)    #a ver si funca con el await
                         await message.channel.send(command_list[command[0].lower()])
                     
                     else: 
