@@ -130,7 +130,9 @@ def run_bot():
                     player = await bot_actions.play(command[1]) ##a ver si funca con el await
                     
                     if (player is not None):
+                        print("final 1")
                         await voice_clients[message.guild.id].play(player)    #a ver si funca con el await
+                        print("final 2")
                         await message.channel.send(command_list[command[0].lower()])
                     
                     else: 

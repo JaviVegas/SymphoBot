@@ -1,5 +1,5 @@
 import asyncio
-from discord import Client, Message, User, FFmpegPCMAudio
+from discord import Client, Message, User, FFmpegOpusAudio
 from src.music_manager import get_song
 
 #async def join(user: User):
@@ -20,10 +20,13 @@ async def play(url: str):
     #aca necesitamos el info
     player = None
     song =  await get_song(url)
-    ffmpeg_options = {"options": "-vn"}
+    ffmpeg_options = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn -filter:a "volume=0.25"'}
+    print("Guau-")
     if (song is not None):
-        player = FFmpegPCMAudio(song['url'], **ffmpeg_options)
+        print("Miau-")
+        player = FFmpegOpusAudio(song['url'], **ffmpeg_options)
 
+    print("Cuak-")
     return player
 
 def pause():

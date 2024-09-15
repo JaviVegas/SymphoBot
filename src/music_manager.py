@@ -35,24 +35,25 @@ async def get_video(url, key, dicci):
         An updated version of the dictionary that represents all downloaded files, including the latest file.
     '''    
     #ffmpeg\fmpeg.exe
-   # absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe") -> modificado
-    #print ("ABSOLUTE EXE PATH" + absolute_exe_path)
+    absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe") # -> modificado
+    print ("ABSOLUTE EXE PATH " + absolute_exe_path)
     name='%(title)s.%(ext)s'; 
 
     print ('im here in get video')
     ydl_opts = {
         'format': 'bestaudio/best',  
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
+        'postprocessors': [
+            {'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3', 
             'preferredquality': '192',
-        }],
-
-       # 'ffmpeg_location': rf'{absolute_exe_path}'-> modificado
-      #  'ffmpeg_location': convert_to_absolute('ffmpeg/ffmpeg.exe') AGREGE LA VARIABLE AL PATH 
+            }
+        ],
+       # 'ffmpeg_location': rf'{absolute_exe_path}' # -> modificado
+       # 'ffmpeg_location': convert_to_absolute('ffmpeg/ffmpeg.exe') # AGREGE LA VARIABLE AL PATH 
     }
     loop = asyncio.get_event_loop()
     def extract_info(url):
+        print("aasddddddd")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             return ydl.extract_info(url, download=False)
     
@@ -63,7 +64,7 @@ async def get_video(url, key, dicci):
      #   info =  await loop.run_in_executor(None, lambda: ydl.extract_info(url, download=False))
         #info = ydl.extract_info(url, download=False)
 
-    
+    print("Retornando INFO.......")
     return info
 #[{url:{titulo: blala, 
 #     artista: blabla
@@ -173,7 +174,7 @@ async def get_song(url):
                 new_dicci=write_history(info, dicci, key)
             else: 
                 new_dicci= dicci
-                new_dicci[key]['Listens']+=1
+                new_dicci[key]['Listens'] =+ 1
             write_json(json_path, new_dicci)
         else: 
             print (" che no tengo url")
