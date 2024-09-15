@@ -35,10 +35,11 @@ async def get_video(url, key, dicci):
         An updated version of the dictionary that represents all downloaded files, including the latest file.
     '''    
     #ffmpeg\fmpeg.exe
-    absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe")
+   # absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe") -> modificado
+    #print ("ABSOLUTE EXE PATH" + absolute_exe_path)
     name='%(title)s.%(ext)s'; 
 
-    
+    print ('im here in get video')
     ydl_opts = {
         'format': 'bestaudio/best',  
         'postprocessors': [{
@@ -47,12 +48,19 @@ async def get_video(url, key, dicci):
             'preferredquality': '192',
         }],
 
-        'ffmpeg_location': rf'{absolute_exe_path}'
+       # 'ffmpeg_location': rf'{absolute_exe_path}'-> modificado
+      #  'ffmpeg_location': convert_to_absolute('ffmpeg/ffmpeg.exe') AGREGE LA VARIABLE AL PATH 
     }
-   
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        loop = asyncio.get_event_loop()
-        info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=False))
+    loop = asyncio.get_event_loop()
+    def extract_info(url):
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            return ydl.extract_info(url, download=False)
+    
+    info = await loop.run_in_executor(None, lambda: extract_info(url))
+    #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #    loop = asyncio.get_event_loop()
+       #info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=False))-> error ortografico
+     #   info =  await loop.run_in_executor(None, lambda: ydl.extract_info(url, download=False))
         #info = ydl.extract_info(url, download=False)
 
     
@@ -120,17 +128,20 @@ def process_url(url):
     None
         Represents the video was not found.
     '''
-    if url.starswith("https://www.youtube.com/watch?v=") or url.startswith("https://m.youtube.com/watch?v=") : 
+    
+    print ("TYPE DE URL:              ____________________")
+    print (type (url ))
+    if url.startswith("https://www.youtube.com/watch?v=") or url.startswith("https://m.youtube.com/watch?v=") : #error ortografico
         key=cut_url(url, '=', '&')
         return key
-    elif url.starswith("https://youtu.be/"):
+    elif url.startswith("https://youtu.be/"):
         key=cut_url(url, '/', '?')
         return key
     else: 
         return None
     
 
-def get_song(url):
+async def get_song(url):
     '''
     Checks if the video file was already downloaded. 
     If it wasn't, then it gets downloaded and its information saved in a json file.
@@ -157,7 +168,7 @@ def get_song(url):
         dicci = read_json(json_path)
         
         if (key is not None): 
-            info=get_video(url, key, dicci)
+            info=await get_video(url, key, dicci)
             if  (key not in dicci):  
                 new_dicci=write_history(info, dicci, key)
             else: 
@@ -168,8 +179,8 @@ def get_song(url):
             print (" che no tengo url")
     except FileNotFoundError: 
         if key is not None: 
-            info=get_video(url, key)
-            new_dicci=write_history(info, dicci, key)
+            info= await get_video(url, key, new_dicci)
+            new_dicci=write_history(info, new_dicci, key)
             write_json(json_path, new_dicci)
     
     return info
