@@ -4,7 +4,7 @@
 
 ## Getting Started
 
-**1.** Obtain this repository:
+**1.** Obtain this repository either by:
   - Using SSH or HTTPS
   - Downloading the `.zip` file and extract its content.
 
