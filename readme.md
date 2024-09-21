@@ -4,9 +4,9 @@
 
 ## Getting Started
 
-1. Obtain this repository:
-   - Using SSH or HTTPS
-   - Downloading the `.zip` file and extract its content.
+**1.** Obtain this repository:
+       - Using SSH or HTTPS
+       - Downloading the `.zip` file and extract its content.
 
 2. Install dependencies:
    - Open the terminal or console in the directory where the repository was downloaded, then run the following line:
