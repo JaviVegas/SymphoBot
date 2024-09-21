@@ -1,14 +1,12 @@
 import os
-import asyncio
 import yt_dlp
 from dotenv import load_dotenv
-from discord import Intents, Client, Message, Status, Game, VoiceClient ,errors
+from discord import Intents, Client, Message, Status, Game, errors
 import src.message_manager as message_manager
 from src.json_controller import read_json
 from src.path_converter import *
 import src.bot_actions as bot_actions
 
-import nacl
 
 def is_bot_message(message_author, this_bot):
     '''

@@ -1,5 +1,5 @@
-import os
 import json
+
 
 def read_json(json_path):
     '''

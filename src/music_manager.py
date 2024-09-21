@@ -1,19 +1,18 @@
 import yt_dlp
-import re
+# import re
 import asyncio
 from src.path_converter import *
 from src.json_controller import *
 
-def extract_info_from_description(description):
-    ##REVISAR SI DEJAMOS ESTA FUNCION O NO 
-    match = re.search(r'(?P<artist>.+?)\s*-\s*(?P<title>.+)', description)
-    if match:
-        return match.group('title').strip(), match.group('artist').strip()
-    return 'Desconocido', 'Desconocido'
+
+# def extract_info_from_description(description):
+#     ##REVISAR SI DEJAMOS ESTA FUNCION O NO 
+#     match = re.search(r'(?P<artist>.+?)\s*-\s*(?P<title>.+)', description)
+#     if match:
+#         return match.group('title').strip(), match.group('artist').strip()
+#     return 'Desconocido', 'Desconocido'
 
        
-    
-#solo descargo el audio
 async def get_video(url, key, dicci):
     '''
     Gets the requested video as an audio file.
@@ -67,11 +66,7 @@ async def get_video(url, key, dicci):
 
     print("Retornando INFO.......")
     return info
-#[{url:{titulo: blala, 
-#     artista: blabla
-#     ruta: blabla}, 
-#{}
-#]
+
 
 def write_history(info, dicci, key):
     title = info.get('title', 'Desconocido')
@@ -111,8 +106,9 @@ def cut_url(url, inichar, endchar):
         key= url[(initialpos+1) : (len(url))]  
     return key
             
-            
-            
+
+# video_web_url = "https://www.youtube.com/watch?v=efS8lO4nCtQ&ab_channel=juanjannon4001"
+# video_app_url = "https://youtu.be/efS8lO4nCtQ?si=kBotFy7AOteH1A49"
 def process_url(url):
     '''
     Processes the video's URL, based on its format, in order to obtain an identifier from it.
@@ -161,11 +157,11 @@ async def get_song(url):
     None
         Represents the video was not found.
     '''
-    #temp_path= convert_to_absolute('temp')
     key= process_url(url)
     json_path=convert_to_absolute('data/history.json')
     new_dicci={}
     info= None
+
     try: 
         dicci = read_json(json_path)
         
@@ -178,7 +174,8 @@ async def get_song(url):
                 new_dicci[key]['Listens'] =+ 1
             write_json(json_path, new_dicci)
         else: 
-            print (" che no tengo url")
+            print ("Che no tengo URL >:(")
+
     except FileNotFoundError: 
         if key is not None: 
             info= await get_video(url, key, new_dicci)
@@ -186,13 +183,3 @@ async def get_song(url):
             write_json(json_path, new_dicci)
     
     return info
-         
-        
-        
-        
-
-# video_web_url = "https://www.youtube.com/watch?v=efS8lO4nCtQ&ab_channel=juanjannon4001"
-# video_app_url="https://youtu.be/efS8lO4nCtQ?si=kBotFy7AOteH1A49"
-
-# get_song(video_web_url)
-# print ("todo ok")

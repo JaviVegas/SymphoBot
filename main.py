@@ -1,4 +1,5 @@
-import src.bot_controller as bot
+import src.start as bot
+
 
 if __name__ == "__main__":
-    bot.run_bot()
+    bot.start_bot()

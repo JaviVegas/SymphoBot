@@ -2,7 +2,7 @@ import os
 
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print (ROOT_PATH )
+print (ROOT_PATH)
 
 
 def convert_to_relative(absolute_path):
