@@ -11,7 +11,7 @@
 **2.** Install dependencies:
   - Open the terminal or console in the directory where the repository was downloaded, then run the following line:
    
-  > `pip install -r requirements.txt`
+    > `pip install -r requirements.txt`
 
 **3.** Place your own discord bot's token in the `.env` file, located in the root folder of this program.
 
