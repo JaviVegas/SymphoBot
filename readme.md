@@ -19,6 +19,8 @@
 
 **5.** Run `main.py`.
 
+***Python 3.10.2 or higher is required.***
+
 ##
 
-***Python 3.10.2 or higher is required.***
+***Made by and [biancaDefelipe](https://github.com/biancaDefelipe) and [JaviVegas](https://github.com/JaviVegas)***
