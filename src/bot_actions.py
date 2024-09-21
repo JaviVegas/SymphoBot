@@ -1,11 +1,11 @@
-import asyncio
-from discord import Client, Message, User, FFmpegOpusAudio
+from discord import Client, Message, User, VoiceClient, FFmpegOpusAudio
 from src.music_manager import get_song
+from src.path_converter import convert_to_absolute
 
 #async def join(user: User):
   #  voice_client = await user.voice.channel.connect() <- anterior
   #  return voice_client    
-async def join(message: Message): 
+async def join(message: Message) -> VoiceClient: 
     if message.author.voice and message.author.voice.channel:
         voice_channel = message.author.voice.channel
         voice_client = await voice_channel.connect()

@@ -2,7 +2,7 @@ import os
 import asyncio
 import yt_dlp
 from dotenv import load_dotenv
-from discord import Intents, Client, Message, Status, Game
+from discord import Intents, Client, Message, Status, Game, VoiceClient ,errors
 import src.message_manager as message_manager
 from src.json_controller import read_json
 from src.path_converter import *
@@ -111,39 +111,43 @@ def run_bot():
         command_list = read_json(convert_to_absolute("data/responses.json"))
         if (command != []) and (command[0].lower() in command_list):
 
-            # Bot Main Actions.
-            
+            # Bot Main Actions.                
+
             if command[0].lower() == "play":
-                
+                if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
+                    try:
+                        vc = await bot_actions.join(message)
+                        voice_clients[vc.guild.id] = vc
+
+                    except errors.ClientException as e:
+                        print(e + "No se puede unir al canal de voz...")
+                else:
+                    print("YA ESTAS EN UN CANAL DE VOZ LOCOOOO")
+
+                print(voice_clients)
+
+                if (voice_clients != {}):
+                    print("EL DICT NO ES VACIO-- HAY UN CLIENTE GUARDADO")
+                    if (voice_clients[message.guild.id].is_playing()):
+                        print("STOPPING---")
+                        voice_clients[message.guild.id].pause()
+
                 try:
-                  # vc = bot_actions.join(message_data["Username"])  <- anterior
-                    print (type(message))
-                    print ("______________________________________________________________")
-                   # vc = await bot_actions.join(message_data["Username"])
-                    vc = await bot_actions.join(message)
-                    print ("hasta aca todo ok")
-                    voice_clients[vc.guild.id] = vc
-                except Exception as e:
-                    print(e, " - No se pudo unir al chat de voz")
-                
-                try:
-                    player = await bot_actions.play(command[1]) ##a ver si funca con el await
+                    player = await bot_actions.play(command[1])
                     
                     if (player is not None):
-                        print("final 1")
-                        await voice_clients[message.guild.id].play(player)    #a ver si funca con el await
-                        print("final 2")
+                        voice_clients[message.guild.id].play(player)
                         await message.channel.send(command_list[command[0].lower()])
                     
                     else: 
-                        await message.channel.send("video not found")
+                        await message.channel.send("Video not found!")
                 
-                except Exception as e:
-                    print(e, " - No se puede reproducir la cancion")
+                except errors.ClientException as e:
+                    print(e, " - No se puede reproducir la cancion...")
 
 
             elif command[0].lower() == "pause":
-                try:
+                try:                    
                     voice_clients[message.guild.id].pause()
                     await message.channel.send(command_list[command[0].lower()])
                 
@@ -165,9 +169,10 @@ def run_bot():
                     voice_clients[message.guild.id].stop()
                     await voice_clients[message.guild.id].disconnect()
                     await message.channel.send(command_list[command[0].lower()])
-                
+                    
                 except Exception as e:
-                    print(e)           
+                    print(e + "NO SE PUDO PARAAAAR")
+
 
         elif (command != []) and (command[0].lower() == "help"):
             await message.channel.send(message_manager.get_help_message())

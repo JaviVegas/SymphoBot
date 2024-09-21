@@ -35,8 +35,8 @@ async def get_video(url, key, dicci):
         An updated version of the dictionary that represents all downloaded files, including the latest file.
     '''    
     #ffmpeg\fmpeg.exe
-    absolute_exe_path= convert_to_absolute("ffmpeg/ffmpeg.exe") # -> modificado
-    print ("ABSOLUTE EXE PATH " + absolute_exe_path)
+    ffmpeg_abs_path= convert_to_absolute("./ffmpeg") # -> modificado
+    print ("ABSOLUTE EXE PATH " + ffmpeg_abs_path)
     name='%(title)s.%(ext)s'; 
 
     print ('im here in get video')
@@ -48,20 +48,21 @@ async def get_video(url, key, dicci):
             'preferredquality': '192',
             }
         ],
-       # 'ffmpeg_location': rf'{absolute_exe_path}' # -> modificado
-       # 'ffmpeg_location': convert_to_absolute('ffmpeg/ffmpeg.exe') # AGREGE LA VARIABLE AL PATH 
+       # 'ffmpeg_location': ffmpeg_abs_path # -> modificado
+       # 'ffmpeg_location': convert_to_absolute('ffmpeg') # AGREGE LA VARIABLE AL PATH 
     }
+    
     loop = asyncio.get_event_loop()
     def extract_info(url):
         print("aasddddddd")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            return ydl.extract_info(url, download=False)
+            return ydl.extract_info(url, download= False)
     
     info = await loop.run_in_executor(None, lambda: extract_info(url))
     #with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    #    loop = asyncio.get_event_loop()
-       #info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=False))-> error ortografico
-     #   info =  await loop.run_in_executor(None, lambda: ydl.extract_info(url, download=False))
+        #loop = asyncio.get_event_loop()
+        #info = loop.run_in_excecutor(None, lambda: ydl.extract_info(url, download=False))-> error ortografico
+        #info = await loop.run_in_executor(None, lambda: ydl.extract_info(url, download=False))
         #info = ydl.extract_info(url, download=False)
 
     print("Retornando INFO.......")
