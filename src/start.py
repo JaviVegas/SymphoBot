@@ -11,7 +11,7 @@ def show_popup(title, message):
 
 
 def start_bot():
-    responses_path = os.path.join(ROOT_PATH, 'responses.json')
+    responses_path = os.path.join(ROOT_PATH, 'data', 'responses.json')
     env_path = os.path.join(ROOT_PATH, '.env')
     ffmpeg_path = os.path.join(ROOT_PATH, "ffmpeg.exe")
     bot_controller_path = os.path.join(ROOT_PATH, 'src', 'bot_controller.py')
