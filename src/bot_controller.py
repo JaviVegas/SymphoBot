@@ -8,7 +8,7 @@ from src.path_converter import *
 import src.bot_actions as bot_actions
 
 
-def is_bot_message(message_author, this_bot):
+def is_bot_message(message_author, this_bot) -> bool:
     '''
     Checks whether the sender of the message is this bot or not.
 
@@ -29,7 +29,7 @@ def is_bot_message(message_author, this_bot):
     if message_author == this_bot:
         return True
 
-def obtain_token():
+def obtain_token() -> str:
     '''
     Gets this bot's authentication token from an existing enviromental variable (".env" file) from this program's enviroment.
     
@@ -41,7 +41,7 @@ def obtain_token():
     load_dotenv()
     return os.getenv("DISCORD_TOKEN")
 
-def get_client():
+def get_client() -> Client:
     '''
     Sets up the bot's client, allowing it to connect to the server and detect events that occur in it.
 
@@ -87,6 +87,11 @@ def run_bot():
     async def on_message(message: Message) -> None:
         '''
         Runs when a message is sent on any of the server channels.
+
+        Parameters
+        ----------
+        message: Message
+            A message sent in any of the server's text channel.
         '''
         if is_bot_message(message.author, client.user):
             return
@@ -100,7 +105,6 @@ def run_bot():
 
         print(f"[{message_data['Channel']}] {message_data['Username']}: '{message_data['Message-Body']}'")
         
-        # CALL RESPONSE MANAGER HERE.
         command = message_manager.get_command(message_data["Message-Body"])
         print(message_data)
         print("--------")
@@ -118,16 +122,12 @@ def run_bot():
                         voice_clients[vc.guild.id] = vc
 
                     except errors.ClientException as e:
-                        print(e + "No se puede unir al canal de voz...")
-                else:
-                    print("YA ESTAS EN UN CANAL DE VOZ LOCOOOO")
+                        print(e + " - No se puede unir al canal de voz...")
 
                 print(voice_clients)
 
                 if (voice_clients != {}):
-                    print("EL DICT NO ES VACIO-- HAY UN CLIENTE GUARDADO")
                     if (voice_clients[message.guild.id].is_playing()):
-                        print("STOPPING---")
                         voice_clients[message.guild.id].pause()
 
                 try:
@@ -169,7 +169,7 @@ def run_bot():
                     await message.channel.send(command_list[command[0].lower()])
                     
                 except Exception as e:
-                    print(e + "NO SE PUDO PARAAAAR")
+                    print(e)
 
 
         elif (command != []) and (command[0].lower() == "help"):

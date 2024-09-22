@@ -13,21 +13,15 @@ from src.json_controller import *
 #     return 'Desconocido', 'Desconocido'
 
        
-async def get_video(url, key, dicci):
+async def get_audio(url):
     '''
-    Gets the requested video as an audio file.
+    Gets the requested video's audio.
 
     Parameters
     ----------
     url : str
         The video's URL
-    key: String
-        The video's identifier, obtained from the URL.
-    dicci: dict
-        A dictionary that represents all previously downloaded files.
-    TEMP_PATH: str
-        Absolute path to the 'temp' directory, where the file will be saved.
-
+    
     Returns
     -------
     dict
@@ -68,7 +62,24 @@ async def get_video(url, key, dicci):
     return info
 
 
-def write_history(info, dicci, key):
+def write_history(info, dicci, key) -> dict:
+    '''
+    Updates the song history.
+
+    Parameters
+    ----------
+    info: dict
+        An updated version of the dictionary that represents all downloaded files, including the latest file.
+    dicci: dict
+        The current content of the song history.
+    key: str
+        The video's identifier, obtained from the URL.
+
+    Returns
+    -------
+    dict
+        The updated song history.
+    '''
     title = info.get('title', 'Desconocido')
     uploader = info.get('uploader', 'Desconocido')
     dicci[key]={'Title': title,
@@ -78,7 +89,7 @@ def write_history(info, dicci, key):
     return dicci
 
 
-def cut_url(url, inichar, endchar): 
+def cut_url(url, inichar, endchar) -> str: 
     '''
     Obtains an identifer for the video from its URL.
 
@@ -106,9 +117,6 @@ def cut_url(url, inichar, endchar):
         key= url[(initialpos+1) : (len(url))]  
     return key
             
-
-# video_web_url = "https://www.youtube.com/watch?v=efS8lO4nCtQ&ab_channel=juanjannon4001"
-# video_app_url = "https://youtu.be/efS8lO4nCtQ?si=kBotFy7AOteH1A49"
 def process_url(url):
     '''
     Processes the video's URL, based on its format, in order to obtain an identifier from it.
@@ -132,17 +140,18 @@ def process_url(url):
     if url.startswith("https://www.youtube.com/watch?v=") or url.startswith("https://m.youtube.com/watch?v=") : #error ortografico
         key=cut_url(url, '=', '&')
         return key
+    
     elif url.startswith("https://youtu.be/"):
         key=cut_url(url, '/', '?')
         return key
+    
     else: 
         return None
     
 
 async def get_song(url):
     '''
-    Checks if the video file was already downloaded. 
-    If it wasn't, then it gets downloaded and its information saved in a json file.
+    Obtains the audio of a video from its URL.
 
     Parameters
     ----------
@@ -166,7 +175,7 @@ async def get_song(url):
         dicci = read_json(json_path)
         
         if (key is not None): 
-            info=await get_video(url, key, dicci)
+            info=await get_audio(url, key, dicci)
             if  (key not in dicci):  
                 new_dicci=write_history(info, dicci, key)
             else: 
@@ -178,7 +187,7 @@ async def get_song(url):
 
     except FileNotFoundError: 
         if key is not None: 
-            info= await get_video(url, key, new_dicci)
+            info= await get_audio(url, key, new_dicci)
             new_dicci=write_history(info, new_dicci, key)
             write_json(json_path, new_dicci)
     

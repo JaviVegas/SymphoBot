@@ -6,11 +6,24 @@ from src.path_converter import ROOT_PATH
 from src.bot_controller import run_bot
 
 
-def show_popup(title, message):
+def show_popup(title, message) -> None:
+    '''
+    Shows a popup window with a message.
+
+    Parameters
+    ----------
+    title: str
+        The title of the popup window.
+    message: str
+        The message of the popup window.
+    '''
     tkinter.messagebox.showinfo(title, message)
 
 
-def start_bot():
+def start_bot() -> None:
+    '''
+    Does an integrity of files verification before running the bot.
+    '''
     responses_path = os.path.join(ROOT_PATH, 'data', 'responses.json')
     env_path = os.path.join(ROOT_PATH, '.env')
     ffmpeg_path = os.path.join(ROOT_PATH, "ffmpeg.exe")

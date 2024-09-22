@@ -1,6 +1,14 @@
 
 
-def get_help_message():
+def get_help_message() -> str:
+    '''
+    Returns a help message.
+
+    Return
+    ------
+    str
+        A help message.
+    '''
     return '''-- SymphoBot Help --
 
 Use "?" to comunicate with SymphoBot, followed by one of the next messages:

@@ -1,19 +1,19 @@
 import json
 
 
-def read_json(json_path):
+def read_json(json_path) -> list:
     '''
-    tries to open the json file and returns its information  
+    Tries to open a ".json" file and read its information.
 
     Parameters
     ----------
-    json_path : String
-        json path
+    json_path : str
+        ".json" file path.
         
     Returns
     -------
-    List
-        
+    list
+        The content of a ".json" file.
     '''
     json_data = []
     with open(json_path, encoding= "utf-8", mode= "r") as file:
@@ -24,18 +24,15 @@ def read_json(json_path):
 
 def write_json(json_path, data):
     '''
-    tries to write the received dictionary to the json file 
+    Tries to open a ".json" file and write in it.
+    
     Parameters
     ----------
     json_path : String
-        json path
-    data: Dictionary
-        information to save in the json
-        
-    Returns
-    -------
-    List
-        
+        ".json" file path.
+    
+    data: dict
+        Information to be written in the ".json" file.
     '''
 
     with open(json_path, encoding= "utf-8", mode= "w") as file:
