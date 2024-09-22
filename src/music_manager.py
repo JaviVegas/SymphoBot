@@ -175,7 +175,7 @@ async def get_song(url):
         dicci = read_json(json_path)
         
         if (key is not None): 
-            info=await get_audio(url, key, dicci)
+            info=await get_audio(url)
             if  (key not in dicci):  
                 new_dicci=write_history(info, dicci, key)
             else: 
@@ -187,7 +187,7 @@ async def get_song(url):
 
     except FileNotFoundError: 
         if key is not None: 
-            info= await get_audio(url, key, new_dicci)
+            info= await get_audio(url)
             new_dicci=write_history(info, new_dicci, key)
             write_json(json_path, new_dicci)
     

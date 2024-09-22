@@ -16,13 +16,17 @@ async def join(message: Message) -> VoiceClient:
     -------
     VoiceClient
         Represents a connection with a voice channel.
+    or
+    None
+        Represents the user is not in a voice channel.
     '''
     if message.author.voice and message.author.voice.channel:
         voice_channel = message.author.voice.channel
         voice_client = await voice_channel.connect()
         return voice_client
     else:
-        raise Exception("The user is not in a voice channel!")
+        #raise Exception("The user is not in a voice channel!")
+        return None
 
 async def play(url: str) -> FFmpegOpusAudio:
     '''

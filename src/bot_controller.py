@@ -119,7 +119,10 @@ def run_bot():
                 if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
                     try:
                         vc = await bot_actions.join(message)
-                        voice_clients[vc.guild.id] = vc
+                        if vc is not None:
+                            voice_clients[vc.guild.id] = vc
+                        else:
+                            await message.channel.send("You must be in a voice channel first! I need to know where to play.")
 
                     except errors.ClientException as e:
                         print(e + " - No se puede unir al canal de voz...")

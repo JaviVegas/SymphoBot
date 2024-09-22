@@ -1,6 +1,6 @@
 # **SymphoBot**
 
-**Symphobot** is a discord bot that can play audio from online videos on a voice channel from any server of your choice.
+**SymphoBot** is a discord bot that can play audio from online videos on a voice channel from any server of your choice.
 
 ## Getting Started
 

@@ -1,7 +1,7 @@
 {
     "play": "Now playing!",
 
-    "pause": "Paused! Enter ?resume to resume.",
+    "pause": "Paused! Enter '?resume' to resume.",
 
     "resume": "Resuming!",
 

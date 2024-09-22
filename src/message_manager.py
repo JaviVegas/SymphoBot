@@ -11,18 +11,18 @@ def get_help_message() -> str:
     '''
     return '''-- SymphoBot Help --
 
-Use "?" to comunicate with SymphoBot, followed by one of the next messages:
+Use one of the following commands to communicate with SymphoBot:
 
--> join:
+?join:
     If you are in a voice channel, use this command to get SymphoBot in the same voice channel as you.
 
--> play <URL>:
+?play <URL>:
     If SymphoBot is in a voice channel, use this command to start playing the audio from a YouTube URL of your choice (Non Private videos only).
 
--> pause:
+?pause:
     If SymphoBot is playing, use this command to pause the current audio.
 
--> stop:
+?stop:
     If SymphoBot is playing or pausing, use this command to stop the current audio.
 
 Enjoy!
