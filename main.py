@@ -1,2 +1,5 @@
+import src.start as bot
+
+
 if __name__ == "__main__":
-    pass
+    bot.start_bot()

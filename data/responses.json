@@ -1,0 +1,16 @@
+{
+    "play": "Now playing!",
+
+    "pause": "Paused! Enter ?resume to resume.",
+
+    "resume": "Resuming!",
+
+    "stop": "Stopping...",
+
+    "add": "Song added to playlist", 
+    "playlist-list":"",
+    "playlist-play":"NONE", 
+    "playlist-pause":"NONE", 
+    "playlist-resume":"NONE",
+    "playlist-clear":"NONE" 
+}
