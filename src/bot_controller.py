@@ -7,6 +7,8 @@ from src.json_controller import read_json
 from src.path_converter import *
 import src.bot_actions as bot_actions
 import src.playlist_manager as playlist_manager
+import src.Playlist as plist
+import asyncio
 
 def is_bot_message(message_author, this_bot):
     '''
@@ -70,6 +72,10 @@ def run_bot():
 
     ffmpeg = {"options": "-vn"}
 
+    playlist= plist()
+
+
+
 
 
     @client.event
@@ -110,60 +116,57 @@ def run_bot():
         print(command)
         print ("COMMAND ->"+ command[0].lower()) 
         command_list = read_json(convert_to_absolute("data/responses.json"))
-        if (command != []) and (command[0].lower() in command_list):
-
-            # Bot Main Actions.                
-
-            if command[0].lower() == "play":
-                if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
-                    #test
-                    print("guid::::::::"+ message.guild.name)
-                    try:
+        
+        
+        
+        async def join_voice_channel():
+            if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
+                try:
                         vc = await bot_actions.join(message)
                         voice_clients[vc.guild.id] = vc
 
-                    except errors.ClientException as e:
-                        print(e + "No se puede unir al canal de voz...")
-                else:
-                    print("YA ESTAS EN UN CANAL DE VOZ LOCOOOO")
-
-                print(voice_clients)
-
-                if (voice_clients != {}):
-                    print("EL DICT NO ES VACIO-- HAY UN CLIENTE GUARDADO")
-                    if (voice_clients[message.guild.id].is_playing()):
-                        print("STOPPING---")
-                        voice_clients[message.guild.id].pause()
-
-                try:
-                    player, duration = await bot_actions.play(command[1])
-                    
-                    if (player is not None):
-                        voice_clients[message.guild.id].play(player)
-                        await message.channel.send(command_list[command[0].lower()])
-                    
-                    else: 
-                        await message.channel.send("Video not found!")
-                
                 except errors.ClientException as e:
-                    print(e, " - No se puede reproducir la cancion...")
+                        print(e + "No se puede unir al canal de voz...")
+            else:
+                print("YA ESTAS EN UN CANAL DE VOZ LOCOOOO")
 
+            return voice_clients
+        
+        async def play_song(url):
+            if (voice_clients != {}):
+                print("EL DICT NO ES VACIO-- HAY UN CLIENTE GUARDADO")
+                if (voice_clients[message.guild.id].is_playing()):
+                    print("STOPPING---")
+                    voice_clients[message.guild.id].pause()
+            try:
+                player, duration, uploader, title = await bot_actions.play()
+                await asyncio.sleep(duration+5)
+                if (player is not None):
+                    voice_clients[message.guild.id].play(player)
+                    await message.channel.send(command_list[command[0].lower()])
+                
+                else: 
+                    await message.channel.send("Video not found!")
+            
+            except errors.ClientException as e:
+                print(e, " - No se puede reproducir la cancion...")
+
+        if (command != []) and (command[0].lower() in command_list):
+
+            # Bot Main Actions.                
+            
+            if command[0].lower() == "play":
+                voice_clients=join_voice_channel()
+                play_song(command[1])
+                
             #FUNCIONALIDAD PARA AGREGAR A LA LISTA
           
             elif command[0].lower() == "add": 
-                if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
-                    if message.author.voice and message.author.voice.channel:
-                        voice_channel = message.author.voice.channel.name
-                        server = message.guild.name
-                        print("POR AHORA TODO OK ME GUARDE LE VOICE CHANNEL Y EL SERVER")
-                        # Agregar la URL a la playlist del canal de voz actual
-                        url = command[1]
-                        await playlist_manager.add_to_playlist(url, voice_channel, server)
-                        print("YA AGREGUE A LA PLAYLIST LA CANCION SOY RE PRO")
-                        await message.channel.send(f"Song added to queue of '{voice_channel}'!")
-
-                    else:
-                        await message.channel.send("You must be on a voice channel to add songs to the playlist!")
+           
+                url = command[1]
+                playlist= playlist_manager.addToPlaylist(url, playlist)
+                await message.channel.send(f"Song added to playlist !")
+             
             elif command[0].lower() == "pause":
                 try:                    
                     voice_clients[message.guild.id].pause()
@@ -193,7 +196,12 @@ def run_bot():
             
             
             elif command[0].lower() == "playlist-play":
-                await bot_actions.playlist_play(message, voice_clients, message.guild.name, message.author.voice.channel.name, client)
+                song_info= playlist_manager.getNextSong(playlist)
+                if song_info is not None:
+                    voice_clients=join_voice_channel()
+                    play_song(song_info[0])
+                
+                 
 
             elif command[0].lower() == "playlist-resume":
                 await bot_actions.playlist_resume(message, voice_clients, message.guild.name, message.author.voice.channel.name)

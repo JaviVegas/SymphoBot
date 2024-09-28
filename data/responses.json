@@ -8,9 +8,10 @@
     "stop": "Stopping...",
 
     "add": "Song added to playlist", 
+
     "playlist-list":"",
-    "playlist-play":"NONE", 
-    "playlist-pause":"NONE", 
-    "playlist-resume":"NONE",
-    "playlist-clear":"NONE" 
+
+    "playlist-play":"Starting playlist", 
+
+    "playlist-clear":"Playlist deleted" 
 }
