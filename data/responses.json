@@ -1,17 +1,13 @@
 {
-    "play": "Now playing!",
+    "playnext": "Now playing ",
 
-    "pause": "Paused! Enter ?resume to resume.",
+    "pause": "Paused!",
 
     "resume": "Resuming!",
 
     "stop": "Stopping...",
 
-    "add": "Song added to playlist", 
+    "add": "Song added to the playlist!",
 
-    "playlist-list":"",
-
-    "playlist-play":"Starting playlist", 
-
-    "playlist-clear":"Playlist deleted" 
+    "clear": "Playlist cleared!"
 }

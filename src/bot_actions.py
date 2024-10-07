@@ -1,7 +1,5 @@
 from discord import Message, VoiceClient, FFmpegOpusAudio
 from src.music_manager import get_song
-from src.path_converter import convert_to_absolute
-from src.playlist_manager import DICCI, add_to_playlist
 import asyncio
 import src.playlist_manager
 
@@ -17,29 +15,29 @@ async def join(message: Message) -> VoiceClient:
         print ( "UUSUARIO NO ESTA EN EL CANAL DE VOZ")
         raise Exception("El usuario no está en un canal de voz")
 
-async def play(url: str):
-    player = None
-    song =  await get_song(url)
-    title = song.get('title', 'Desconocido')
-    uploader = song.get('uploader', 'Desconocido')
+
+async def play(url):
     ffmpeg_options = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn -filter:a "volume=0.25"'}
+    song_info = get_song(url)
     print("Guau-")
-    if (song is not None):
+    player = None
+    if (song_info is not None):
         print("Miau-")
-        duration = song.get('duration')  # 'duration' ya viene en segundos desde yt-dlp
-        player = FFmpegOpusAudio(song['url'], **ffmpeg_options)
+        duration = song_info.get('duration')  # 'duration' ya viene en segundos desde yt-dlp
+        player = FFmpegOpusAudio(song_info['url'], **ffmpeg_options)
 
     print("Cuak-")
-    return player, duration, uploader, title
+    return player, duration
 
-def pause():
-    pass
 
-def stop():
-    pass
 
-def add(url: str):
-    pass
+
+
+
+
+
+
+
 
 #async def playlist_play(message, voice_clients, server, voice_channel, client, playlist):
  

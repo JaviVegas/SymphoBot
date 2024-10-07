@@ -8,14 +8,23 @@ Use "?" to comunicate with SymphoBot, followed by one of the next messages:
 -> join:
     If you are in a voice channel, use this command to get SymphoBot in the same voice channel as you.
 
--> play <URL>:
-    If SymphoBot is in a voice channel, use this command to start playing the audio from a YouTube URL of your choice (Non Private videos only).
+-> add <URL>
+    Adds a Youtube video of your choice to the playlist (Non-Private videos only).
+
+-> playnext:
+    If SymphoBot is in a voice channel, use this command to start playing the next video the playlist.
+    Videos will play in the same order they where added.
+    
+    [!] Note that there must be at least one Youtube video in the playlist, otherwise this command will not work.
 
 -> pause:
     If SymphoBot is playing, use this command to pause the current audio.
 
 -> stop:
-    If SymphoBot is playing or pausing, use this command to stop the current audio.
+    If SymphoBot is playing or paused, use this command to stop the current audio.
+
+-> clear:
+    Clears playlist. Cannot undo.
 
 Enjoy!
 '''
