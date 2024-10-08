@@ -9,7 +9,7 @@ async def join(message: Message) -> VoiceClient:
         voice_client = await voice_channel.connect()
         return voice_client
     else:
-        print ( "UUSUARIO NO ESTA EN EL CANAL DE VOZ")
+        print ( "USUARIO NO ESTA EN EL CANAL DE VOZ")
         raise Exception("El usuario no está en un canal de voz")
 
 async def play(url: str):
@@ -23,9 +23,3 @@ async def play(url: str):
 
     print("Cuak-")
     return player
-
-def pause():
-    pass
-
-def stop():
-    pass

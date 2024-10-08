@@ -113,12 +113,17 @@ def run_bot():
 
             if command[0].lower() == "play":
                 if (voice_clients == {}) or (not voice_clients[message.guild.id].is_connected()):
-                    try:
-                        vc = await bot_actions.join(message)
-                        voice_clients[vc.guild.id] = vc
+                    if (len(command) == 2):
+                        try:
+                            vc = await bot_actions.join(message)
+                            voice_clients[vc.guild.id] = vc
 
-                    except errors.ClientException as e:
-                        print(e + "No se puede unir al canal de voz...")
+                        except errors.ClientException as e:
+                            print(e + "No se puede unir al canal de voz...")
+                    
+                    else:
+                        await message.channel.send("[!] A link was not provided!\nCould not play.\nUse ?help for more info.")
+
                 else:
                     print("YA ESTAS EN UN CANAL DE VOZ LOCOOOO")
 
@@ -138,7 +143,7 @@ def run_bot():
                         await message.channel.send(command_list[command[0].lower()])
                     
                     else: 
-                        await message.channel.send("Video not found!")
+                        await message.channel.send("[!] Video not found!")
                 
                 except errors.ClientException as e:
                     print(e, " - No se puede reproducir la cancion...")
@@ -169,7 +174,7 @@ def run_bot():
                     await message.channel.send(command_list[command[0].lower()])
                     
                 except Exception as e:
-                    print(e + "NO SE PUDO PARAAAAR")
+                    print(e + "NO SE PUDO PARAAAAAAAAR")
 
 
         elif (command != []) and (command[0].lower() == "help"):
